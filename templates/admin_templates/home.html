@@ -1,0 +1,133 @@
+{% extends 'admin_templates/admin_layout.html' %}
+
+
+{% block content %}
+
+<style>
+    .card {
+        /* box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; */
+        box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;
+    }
+
+    .row p{
+        font-size: .8rem;
+    }
+</style>
+
+<div class="row">
+    <!-- User Profile Card and Academic Details -->
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header">
+                User Profile
+            </div>
+            <div class="card-body">
+                <!-- User Profile content -->
+                <div class="row">
+                    <div class="col-sm-3">
+                      <p class="mb-0">Full Name</p>
+                    </div>
+                    <div class="col-sm-9">
+                      <p class="text-muted mb-0">{{current_user.last_name}} {{current_user.first_name}}</p>
+                    </div>
+                  </div>
+                  <hr>
+
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <p class="mb-0">Email</p>
+                    </div>
+                    <div class="col-sm-9">
+                      <p class="text-muted mb-0">{{current_user.email}}</p>
+                    </div>
+                  </div>
+                  <hr>
+
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <p class="mb-0">Code</p>
+                    </div>
+                    <div class="col-sm-9">
+                      <p class="text-muted mb-0">{{current_user.adm_id}}</p>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <p class="mb-0">Role</p>
+                    </div>
+                    <div class="col-sm-9">
+                      <p class="text-muted mb-0">{{current_user.role.name.title()}} {% if current_user.is_superadmin %} &nbsp; <i class="fas fa-crown text-warning bg-dark p-1 rounded" style="font-size: .7rem;"></i> {% endif %} </p>
+                    </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 d-none d-md-block">
+        <div class="card">
+            <div class="card-header">
+                Academic Details
+            </div>
+            <div class="card-body">
+                <!-- Academic Details content -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Students -->
+<div class="row mt-3">
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header">
+                <span>Students</span>
+                <span class="float-end">
+                    <a href="{{url_for('admin.student_quarters')}}" class="btn btn-info text-dark badge fw-normal shadow-none" style="font-size: .7rem;">View All</a>
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table no-wrap user-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="border-0 text-uppercase font-medium pl-4" style="font-size: .9rem;">#</th>
+                                        <th scope="col" class="border-0 text-uppercase font-medium" style="font-size: .9rem;">Name</th>
+                                        <th scope="col" class="border-0 text-uppercase font-medium" style="font-size: .9rem;">Matric</th>
+                                        <th scope="col" class="border-0 text-uppercase font-medium" style="font-size: .9rem;">Email</th>
+                                        <th scope="col" class="border-0 text-uppercase font-medium" style="font-size: .9rem;">Added</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for student in students %}
+                                    <tr>
+                                        <td class="pl-4" style="font-size: .8rem;">{{loop.index}}</td>
+                                        <td>
+                                            <h5 class="font-medium mb-0" style="font-size: 1rem;">{{student.last_name}} {{student.first_name}}</h5>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted" style="font-size: .8rem;">{{student.stud_id}}</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted" style="font-size: .8rem;">{{student.email}}</span><br>
+                                            <span class="text-muted" style="font-size: .8rem;">{{student.phone}}</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted" style="font-size: .8rem;">{{student.date}}</span><br>
+                                            <span class="text-muted" style="font-size: .8rem;">{{student.time}}</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

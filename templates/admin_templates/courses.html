@@ -1,0 +1,330 @@
+{% extends 'admin_templates/admin_layout.html' %}
+
+
+{% block content %}
+
+<div class="row {% if not current_user.is_superadmin %} d-none {% endif %}">
+    <!-- User Profile Card and Academic Details -->
+    <div class="col-md-12">
+        <div class="container-fluid px-1 py-5 mx-auto">
+            <div class="row d-flex justify-content-center">
+                <div class="col-xl-7 col-lg-8 col-md-9 col-11 text-center">
+                    <h3>Add Course</h3>
+                    <div class="card">
+                        <form class="form-card" method="post" action="">
+                            <div class="row justify-content-between text-left">
+                                <div class="form-group col-sm-6 flex-column d-flex"> <label
+                                        class="form-control-label px-3">Course Title<span class="text-danger">
+                                            *</span></label> <input type="text" id="fname" name="course_title" value="{{course_title}}"
+                                        placeholder="Enter Course Title" style="font-size: .8rem !important;" onblur="validate(1)"> </div>
+                                <div class="form-group col-sm-6 flex-column d-flex"> <label
+                                        class="form-control-label px-3">Course Code<span class="text-danger">
+                                            *</span></label> <input type="text" id="lname" name="course_code" value="{{course_code}}"
+                                        placeholder="Enter Course Code"  style="font-size: .8rem !important;" onblur="validate(2)"> </div>
+                            </div>
+                            <div class="row justify-content-between text-left">
+                                <div class="form-group col-sm-6 flex-column d-flex"> <label
+                                        class="form-control-label px-3">Course Unit<span class="text-danger">
+                                            *</span></label> <input type="number" id="email" name="course_unit" value="{{course_unit}}" placeholder="Enter Course Unit" style="font-size: .8rem !important;"
+                                        onblur="validate(3)"> </div>
+                                <div class="form-group col-sm-6 flex-column d-flex"> <label
+                                        class="form-control-label px-3 mb-2">Lecturer<span class="text-danger">
+                                            *</span></label>
+                                            <select id="mob" name="lecturer" placeholder="" class="form-control shadow-none py-2"  style="font-size: .9rem !important;"
+                                        onblur="validate(4)">
+                                                <option value="" selected disabled>Lecturer</option>
+                                                {% for Lecturer in lecturers %}
+                                                <option value="{{Lecturer.id}}" {% if Lecturer.id == selected_lecturer %} selected {% endif %}>
+                                                    {{Lecturer.first_name}} {{Lecturer.last_name}} - {{Lecturer.email[:6]}} *** {{Lecturer.email[-6:]}}</option>
+                                                {% endfor %}
+                                            </select>
+                                     </div>
+                            </div>
+                            <div class="row justify-content-end">
+                                <div class="form-group col-sm-12"> <button type="submit" style="font-size: .8rem !important;"
+                                        class="btn-block btn-info">Submit</button> </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Students -->
+<div class="row mt-3">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <span>Courses</span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive-sm">
+                            <table class="table no-wrap user-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="border-0 text-uppercase font-medium pl-4" style="font-size: .9rem;">#</th>
+                                        <th scope="col" class="border-0 text-uppercase font-medium" style="font-size: .9rem;">Course Name</th>
+                                        <th scope="col" class="border-0 text-uppercase font-medium" style="font-size: .9rem;">Course Code</th>
+                                        <th scope="col" class="border-0 text-uppercase font-medium" style="font-size: .9rem;">Course Unit</th>
+                                        <th scope="col" class="border-0 text-uppercase font-medium" style="font-size: .9rem;">Student Reg.</th>
+                                        <th scope="col" class="border-0 text-uppercase font-medium" style="font-size: .9rem;">Lecturer</th>
+                                        <th scope="col" class="border-0 text-uppercase font-medium" style="font-size: .9rem;">Manage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for course in all_courses %}
+                                    <tr>
+                                        <td class="pl-4" style="font-size: .8rem;">{{loop.index}}</td>
+                                        <td>
+                                            <h5 class="font-medium mb-0 mt-2" style="font-size: 1rem;">{{course.course_title.title()}}</h5>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted mt-2" style="font-size: .8rem;">{{course.course_code}}</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted mt-2" style="font-size: .8rem;">{{course.course_unit}}</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted mt-2" style="font-size: .8rem;">{{course.student_reg}}</span>
+                                        </td>
+                                        <td>
+                                            <select class="form-control category-select py-2 shadow-none" style="font-size: .8rem;" id="exampleFormControlSelect1">
+                                                <option selected disabled>{{course.lecturer}}</option>
+                                            </select>
+                                        </td>
+                                        <td class="pt-0">
+                                            <button type="button"
+                                                class="btn py-0 px-3 btn-outline-info btn-circle btn-lg btn-circle"><i
+                                                    class="fa fa-key" style="font-size: .8rem;"></i> </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination controls -->
+<nav aria-label="Page navigation example" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if page > 1 %}
+        <li class="page-item">
+            <a class="page-link btn btn-info" href="{{ url_for('admin.courses', page=1, per_page=per_page) }}" aria-label="First">
+                <span aria-hidden="true">&laquo;&laquo;</span>
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link btn btn-info" href="{{ url_for('admin.courses', page=page-1, per_page=per_page) }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        {% endif %}
+        {% for num in range(1, total_pages + 1) %}
+        <li class="page-item {% if num == page %}active{% endif %}">
+            <a class="page-link btn btn-info" href="{{ url_for('admin.courses', page=num, per_page=per_page) }}">{{ num }}</a>
+        </li>
+        {% endfor %}
+        {% if page < total_pages %}
+        <li class="page-item">
+            <a class="page-link btn btn-info" href="{{ url_for('admin.courses', page=page+1, per_page=per_page) }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link btn btn-info" href="{{ url_for('admin.courses', page=total_pages, per_page=per_page) }}" aria-label="Last">
+                <span aria-hidden="true">&raquo;&raquo;</span>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+<!-- End Pagination controls -->
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<style>
+    body {
+        color: #000;
+        overflow-x: hidden;
+        height: 100%;
+        background-image: url("https://res.cloudinary.com/duyoxldib/image/upload/v1714122278/yusuf-evli-DjQx057gBC0-unsplash_xwh5n9.jpg");
+        /* make the background image fixed */
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-size: 100% 100%
+    }
+
+    .card {
+        padding: 30px 40px;
+        margin-top: 60px;
+        margin-bottom: 60px;
+        border: none !important;
+        box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.2)
+    }
+
+    .blue-text {
+        color: #00BCD4
+    }
+
+    .form-control-label {
+        margin-bottom: 0
+    }
+
+    input,
+    textarea,
+    button {
+        padding: 8px 15px;
+        border-radius: 5px !important;
+        margin: 5px 0px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        font-size: 18px !important;
+        font-weight: 300
+    }
+
+    input:focus,
+    textarea:focus {
+        -moz-box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
+        border: 1px solid #00BCD4;
+        outline-width: 0;
+        font-weight: 400
+    }
+
+    .btn-block {
+        text-transform: uppercase;
+        font-size: 15px !important;
+        font-weight: 400;
+        height: 43px;
+        cursor: pointer
+    }
+
+    .btn-block:hover {
+        color: #fff !important
+    }
+
+    label{
+        font-size: .9rem;
+    }
+
+    button:focus {
+        -moz-box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
+        outline-width: 0
+    }
+
+    /* Reset Bootstrap button styles */
+    .btn.btn-info {
+        color: #fff !important;
+        background-color: #17a2b8 !important;
+        border-color: #17a2b8 !important;
+        margin-right: 2px !important;
+    }
+
+    .btn.btn-info:hover {
+        color: #fff !important;
+        background-color: #138496 !important;
+        border-color: #117a8b !important;
+    }
+
+    .btn.btn-info:focus,
+    .btn.btn-info.focus {
+        box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.5) !important;
+    }
+</style>
+
+<script>
+    function validate(val) {
+        v1 = document.getElementById("fname");
+        v2 = document.getElementById("lname");
+        v3 = document.getElementById("email");
+        v4 = document.getElementById("mob");
+        v5 = document.getElementById("job");
+        v6 = document.getElementById("ans");
+
+        flag1 = true;
+        flag2 = true;
+        flag3 = true;
+        flag4 = true;
+        flag5 = true;
+        flag6 = true;
+
+        if (val >= 1 || val == 0) {
+            if (v1.value == "") {
+                v1.style.borderColor = "red";
+                flag1 = false;
+            }
+            else {
+                v1.style.borderColor = "green";
+                flag1 = true;
+            }
+        }
+
+        if (val >= 2 || val == 0) {
+            if (v2.value == "") {
+                v2.style.borderColor = "red";
+                flag2 = false;
+            }
+            else {
+                v2.style.borderColor = "green";
+                flag2 = true;
+            }
+        }
+        if (val >= 3 || val == 0) {
+            if (v3.value == "") {
+                v3.style.borderColor = "red";
+                flag3 = false;
+            }
+            else {
+                v3.style.borderColor = "green";
+                flag3 = true;
+            }
+        }
+        if (val >= 4 || val == 0) {
+            if (v4.value == "") {
+                v4.style.borderColor = "red";
+                flag4 = false;
+            }
+            else {
+                v4.style.borderColor = "green";
+                flag4 = true;
+            }
+        }
+        if (val >= 5 || val == 0) {
+            if (v5.value == "") {
+                v5.style.borderColor = "red";
+                flag5 = false;
+            }
+            else {
+                v5.style.borderColor = "green";
+                flag5 = true;
+            }
+        }
+        if (val >= 6 || val == 0) {
+            if (v6.value == "") {
+                v6.style.borderColor = "red";
+                flag6 = false;
+            }
+            else {
+                v6.style.borderColor = "green";
+                flag6 = true;
+            }
+        }
+
+        flag = flag1 && flag2 && flag3 && flag4 && flag5 && flag6;
+
+        return flag;
+    }
+</script>
+
+{% endblock content %}

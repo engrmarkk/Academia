@@ -1,0 +1,367 @@
+{% extends 'admin_templates/admin_layout.html' %}
+
+
+{% block content %}
+
+<div class="row {% if not current_user.is_superadmin %} d-none {% endif %}">
+    <!-- User Profile Card and Academic Details -->
+    <div class="col-md-12">
+        <div class="container-fluid px-1 py-5 mx-auto">
+            <div class="row d-flex justify-content-center">
+                <div class="col-xl-7 col-lg-8 col-md-9 col-11 text-center">
+                    <h3>Add Student</h3>
+                    <div class="card">
+                        <form class="form-card" method="post" action="">
+                            <div class="row justify-content-between text-left">
+                                <div class="form-group col-sm-6 flex-column d-flex"> <label
+                                        class="form-control-label px-3">First name<span class="text-danger">
+                                            *</span></label> <input type="text" id="fname" name="fname"
+                                        placeholder="Enter student first name" style="font-size: .8rem !important;"
+                                        onblur="validate(1)" value="{{first_name}}"> </div>
+                                <div class="form-group col-sm-6 flex-column d-flex"> <label
+                                        class="form-control-label px-3">Last name<span class="text-danger">
+                                            *</span></label> <input type="text" id="lname" name="lname"
+                                        placeholder="Enter student last name" style="font-size: .8rem !important;"
+                                        onblur="validate(2)" value="{{last_name}}"> </div>
+                            </div>
+                            <div class="row justify-content-between text-left">
+                                <div class="form-group col-sm-6 flex-column d-flex"> <label
+                                        class="form-control-label px-3">Email<span class="text-danger">
+                                            *</span></label> <input type="email" id="email" name="email"
+                                        placeholder="Enter student email" style="font-size: .8rem !important;"
+                                        onblur="validate(3)" value="{{email}}"> </div>
+                                <div class="form-group col-sm-6 flex-column d-flex"> <label
+                                        class="form-control-label px-3">Phone number<span class="text-danger">
+                                            *</span></label> <input type="tel" id="mob" name="phone"
+                                        placeholder="Enter student phone number" maxlength="11"
+                                        style="font-size: .8rem !important;" onblur="validate(4)"
+                                        value="{{phone_number}}"> </div>
+                            </div>
+                            <div class="row justify-content-end">
+                                <div class="form-group col-sm-12"> <button type="submit"
+                                        style="font-size: .8rem !important;" class="btn-block btn-info">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Students -->
+<div class="row mt-3">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <span class="float-end d-flex align-items-center">
+                    {% if reset_filter %}
+                    <a href="{{url_for('admin.student_quarters')}}" class="badge btn btn-info text-white fw-normal py-2 px-3 mx-2">
+                        <i class="fa-solid fa-rotate-right" style="font-size: .9rem;"></i>
+                    </a>
+                    {% endif %}
+                    <button class="badge btn btn-info text-white fw-normal py-1 px-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <i class="fa-solid fa-filter" style="font-size: .8rem;"></i>
+                    </button>
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive-sm">
+                            <table class="table no-wrap user-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="border-0 text-uppercase font-medium pl-4"
+                                            style="font-size: .9rem;">#</th>
+                                        <th scope="col" class="border-0 text-uppercase font-medium"
+                                            style="font-size: .9rem;">Name</th>
+                                        <th scope="col" class="border-0 text-uppercase font-medium"
+                                            style="font-size: .9rem;">Matric</th>
+                                        <th scope="col" class="border-0 text-uppercase font-medium"
+                                            style="font-size: .9rem;">Email</th>
+                                        <th scope="col" class="border-0 text-uppercase font-medium"
+                                            style="font-size: .9rem;">Courses Registered</th>
+                                        <th scope="col" class="border-0 text-uppercase font-medium"
+                                            style="font-size: .9rem;">Manage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for student in all_students %}
+                                    <tr>
+                                        <td class="pl-4" style="font-size: .8rem;">{{loop.index}}</td>
+                                        <td>
+                                            <h5 class="font-medium mb-0" style="font-size: 1rem;">{{student.last_name}} {{student.first_name}}</h5>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted" style="font-size: .8rem;">{{student.stud_id}}</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted"
+                                                style="font-size: .8rem;">{{student.email}}</span><br>
+                                            <span class="text-muted" style="font-size: .8rem;">{{student.phone}}</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted" style="font-size: .8rem;">{{student.courses_registered}}</span>
+                                        </td>
+                                        <td class="pt-0 d-flex align-items-center mt-2">
+                                            <a href="{{ url_for('admin.view_student', student_id=student.id) }}"
+                                                class="btn py-0 px-3 btn-outline-info btn-circle btn-lg btn-circle text-decoration-none shadow-none">
+                                                <i
+                                                    class="fa-solid fa-circle-info" style="font-size: .8rem;"></i></a>
+                                            <!-- <button type="button"
+                                                class="btn py-0 px-3 btn-outline-info btn-circle btn-lg btn-circle ml-2"><i
+                                                    class=" {% if not student.active %} fa-solid fa-ban text-danger {% else %} fa-solid fa-check text-success {% endif %}" style="font-size: .8rem;"></i> </button> -->
+                                            <div class="badge fw-normal rounded-circle p-2 ms-3 {% if not student.active %} bg-danger {% else %} bg-success {% endif %}">
+                                                {% if student.active %}
+                                                <span></span>
+                                                {% else %}
+                                                <span></span>
+                                                {% endif %}
+                                            </div>
+                                            <!-- <button type="button"
+                                                class="btn py-0 px-3 btn-outline-info btn-circle btn-lg btn-circle ml-2"><i
+                                                    class="fa fa-edit" style="font-size: .8rem;"></i> </button>
+                                            <button type="button"
+                                                class="btn py-0 px-3 btn-outline-info btn-circle btn-lg btn-circle ml-2"><i
+                                                    class="fa fa-upload" style="font-size: .8rem;"></i> </button> -->
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Pagination controls -->
+                <nav aria-label="Page navigation example" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if page > 1 %}
+                        <li class="page-item">
+                            <a class="page-link btn btn-info"
+                                href="{{ url_for('admin.student_quarters', page=1, per_page=per_page) }}" aria-label="First">
+                                <span aria-hidden="true">&laquo;&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link btn btn-info"
+                                href="{{ url_for('admin.student_quarters', page=page-1, per_page=per_page) }}"
+                                aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% for num in range(1, total_pages + 1) %}
+                        <li class="page-item {% if num == page %}active{% endif %}">
+                            <a class="page-link btn btn-info"
+                                href="{{ url_for('admin.student_quarters', page=num, per_page=per_page) }}">{{ num }}</a>
+                        </li>
+                        {% endfor %}
+                        {% if page < total_pages %} <li class="page-item">
+                            <a class="page-link btn btn-info"
+                                href="{{ url_for('admin.student_quarters', page=page+1, per_page=per_page) }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link btn btn-info"
+                                    href="{{ url_for('admin.student_quarters', page=total_pages, per_page=per_page) }}"
+                                    aria-label="Last">
+                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Filter Student</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="get" class="form-group">
+            <input type="text" class="form-control" name="matric_no" value="{% if matric_no %}{{matric_no}}{% endif %}" placeholder="Matric Number" style="font-size: 1rem !important;">
+            <select name="course_id" id="" class="form-control shadow-none">
+                <option value="" selected disabled>Courses</option>
+                {% for course in all_courses %}
+                <option value="{{ course.id }}" {% if course_id == course.id %} selected {% endif %}>{{ course.course_title }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Filter" class="form-control btn btn-info text-white" style="font-size: 1rem !important;">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+    body {
+        color: #000;
+        overflow-x: hidden;
+        height: 100%;
+        background-image: url("https://res.cloudinary.com/duyoxldib/image/upload/v1714122278/yusuf-evli-DjQx057gBC0-unsplash_xwh5n9.jpg");
+        /* make the background image fixed */
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-size: 100% 100%
+    }
+
+    .card {
+        padding: 30px 40px;
+        margin-top: 60px;
+        margin-bottom: 60px;
+        border: none !important;
+        box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.2)
+    }
+
+    .blue-text {
+        color: #00BCD4
+    }
+
+    .form-control-label {
+        margin-bottom: 0
+    }
+
+    input,
+    textarea,
+    button {
+        padding: 8px 15px;
+        border-radius: 5px !important;
+        margin: 5px 0px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        font-size: 18px !important;
+        font-weight: 300
+    }
+
+    input:focus,
+    textarea:focus {
+        -moz-box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
+        border: 1px solid #00BCD4;
+        outline-width: 0;
+        font-weight: 400
+    }
+
+    .btn-block {
+        text-transform: uppercase;
+        font-size: 15px !important;
+        font-weight: 400;
+        height: 43px;
+        cursor: pointer
+    }
+
+    .btn-block:hover {
+        color: #fff !important
+    }
+
+    label {
+        font-size: .9rem;
+    }
+
+    button:focus {
+        -moz-box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
+        outline-width: 0
+    }
+</style>
+
+<script>
+    function validate(val) {
+        v1 = document.getElementById("fname");
+        v2 = document.getElementById("lname");
+        v3 = document.getElementById("email");
+        v4 = document.getElementById("mob");
+        v5 = document.getElementById("job");
+        v6 = document.getElementById("ans");
+
+        flag1 = true;
+        flag2 = true;
+        flag3 = true;
+        flag4 = true;
+        flag5 = true;
+        flag6 = true;
+
+        if (val >= 1 || val == 0) {
+            if (v1.value == "") {
+                v1.style.borderColor = "red";
+                flag1 = false;
+            }
+            else {
+                v1.style.borderColor = "green";
+                flag1 = true;
+            }
+        }
+
+        if (val >= 2 || val == 0) {
+            if (v2.value == "") {
+                v2.style.borderColor = "red";
+                flag2 = false;
+            }
+            else {
+                v2.style.borderColor = "green";
+                flag2 = true;
+            }
+        }
+        if (val >= 3 || val == 0) {
+            if (v3.value == "") {
+                v3.style.borderColor = "red";
+                flag3 = false;
+            }
+            else {
+                v3.style.borderColor = "green";
+                flag3 = true;
+            }
+        }
+        if (val >= 4 || val == 0) {
+            if (v4.value == "") {
+                v4.style.borderColor = "red";
+                flag4 = false;
+            }
+            else {
+                v4.style.borderColor = "green";
+                flag4 = true;
+            }
+        }
+        if (val >= 5 || val == 0) {
+            if (v5.value == "") {
+                v5.style.borderColor = "red";
+                flag5 = false;
+            }
+            else {
+                v5.style.borderColor = "green";
+                flag5 = true;
+            }
+        }
+        if (val >= 6 || val == 0) {
+            if (v6.value == "") {
+                v6.style.borderColor = "red";
+                flag6 = false;
+            }
+            else {
+                v6.style.borderColor = "green";
+                flag6 = true;
+            }
+        }
+
+        flag = flag1 && flag2 && flag3 && flag4 && flag5 && flag6;
+
+        return flag;
+    }
+</script>
+
+{% endblock content %}
