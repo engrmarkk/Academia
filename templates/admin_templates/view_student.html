@@ -1,0 +1,176 @@
+{% extends 'admin_templates/admin_layout.html' %}
+
+
+{% block content %}
+<section class="h-100 gradient-custom-2">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center">
+        <div class="col col-lg-9 col-xl-12">
+          <div class="card">
+            <div class="rounded-top text-white d-flex flex-row" style="background-color: #000; height:200px;">
+              <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                  alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2"
+                  style="width: 150px; z-index: 1">
+              </div>
+              <div class="ms-3" style="margin-top: 130px;">
+                <h3 class="d-flex align-items-center">{{student.last_name}} {{student.first_name}} 
+                  <i class="fa-solid fa-circle ms-3 {% if not student.active %} text-danger {% endif %}" style="font-size: .8rem; color: rgb(67, 242, 67);"></i></h5>
+                <p>{{student.stud_id}}</p>
+              </div>
+            </div>
+            <div class="p-4 text-black bg-body-tertiary">
+              <div class="d-flex justify-content-end text-center py-1 text-body">
+
+                <div class="me-auto">
+                    <a href="{{url_for('admin.change_active_status', student_id=student.id)}}" class="btn py-0 px-3 btn-info btn-lg text-decoration-none">
+                      {% if student.active %}
+                        <i class="fa-solid fa-ban text-danger"></i>
+                      {% else %}
+                      <i class="fa-regular fa-circle-check text-white"></i>
+                      {% endif %}
+                    </a>
+                    <a class="btn py-0 px-3 btn-info btn-lg text-decoration-none text-dark" data-bs-toggle="modal" data-bs-target="#exampleModalUpload">
+                        <i class="fa-solid fa-upload"></i>
+                    </a>
+                    <a href="" class="btn py-0 px-3 btn-info btn-lg text-decoration-none text-muted">
+                        <i class="fa-solid fa-arrow-up"></i>
+                    </a>
+                  </div>
+
+                <div>
+                  <p class="mb-1 h5">{{course_registered.count()}}</p>
+                  <p class="small text-muted mb-0">Reg. Courses</p>
+                </div>
+                <div class="px-3">
+                  <p class="mb-1 h5">{{student.gpa}}</p>
+                  <p class="small text-muted mb-0">CGPA</p>
+                </div>
+                <div>
+                  <p class="mb-1 h5">{{total_units}}</p>
+                  <p class="small text-muted mb-0">Units Registered</p>
+                </div>
+              </div>
+            </div>
+            <div class="card-body p-4 text-black">
+              <!-- <div class="mb-5  text-body">
+                <p class="lead fw-normal mb-1">About</p>
+                <div class="p-4 bg-body-tertiary">
+                  <p class="font-italic mb-1">Web Developer</p>
+                  <p class="font-italic mb-1">Lives in New York</p>
+                  <p class="font-italic mb-0">Photographer</p>
+                </div>
+              </div> -->
+
+              <!-- TABLE -->
+
+              <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table no-wrap user-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="border-0 text-uppercase font-medium pl-4" style="font-size: .9rem;">#</th>
+                                    <th scope="col" class="border-0 text-uppercase font-medium" style="font-size: .9rem;">Course Title</th>
+                                    <th scope="col" class="border-0 text-uppercase font-medium" style="font-size: .9rem;">Course Code</th>
+                                    <th scope="col" class="border-0 text-uppercase font-medium" style="font-size: .9rem;">Course Unit</th>
+                                    <th scope="col" class="border-0 text-uppercase font-medium" style="font-size: .9rem;">Lecturer</th>
+                                    <th scope="col" class="border-0 text-uppercase font-medium" style="font-size: .9rem;">Scores</th>
+                                    <th scope="col" class="border-0 text-uppercase font-medium" style="font-size: .9rem;">Grade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for course in course_registered %}
+                                <tr>
+                                    <td class="pl-4" style="font-size: .8rem;">{{loop.index}}</td>
+                                    <td>
+                                        <h5 class="font-medium mb-0" style="font-size: 1rem;">{{course.course.course_title}}</h5>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted" style="font-size: .8rem;">{{course.course.course_code}}</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted" style="font-size: .8rem;">{{course.course.course_unit}}</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted" style="font-size: .8rem;">{{course.course.lecturer.last_name}} {{course.course.lecturer.first_name}}</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted" style="font-size: .8rem;">{{course.score}}</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted" style="font-size: .8rem;">{{course.grade}}</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+              <!-- TABLE END -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- Modal -->
+<div class="modal fade" id="exampleModalUpload" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Upload Results</h5>
+        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{{url_for('admin.upload_result', student_id=student.id)}}" method="post" class="form-group">
+          <div class="row">
+            {% for course in course_registered %}
+            <div class="col-md-9 my-2">
+              <input type="text" value="({{course.course.course_code}}) {{course.course.course_title}}" class="form-control shadow-none
+              bg-white text-dark border-1" style="font-size: .8rem;" readonly>
+            </div>
+            <div class="col-md-3 my-2">
+              <input type="number" class="form-control shadow-none" placeholder="Score" name="{{course.course_id}}" max="100" oninput="validateMax100(this)" style="font-size: .8rem;" value="{{course.score}}">
+            </div>
+            {% endfor %}
+          </div>
+          <span>
+          </span>
+            <div class="mt-2">
+              <input type="submit" value="Upload" class="form-control btn btn-info text-white" {% if not course_registered[0] %} disabled {% endif %}>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+  </section>
+
+  <style>
+    /* Chrome, Safari, Edge, Opera */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+  </style>
+
+  <script>
+    function validateMax100(input) {
+    if (input.value > 100) {
+        input.value = 100;
+    }
+    }
+  </script>
+{% endblock content %}
