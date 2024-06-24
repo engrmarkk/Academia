@@ -19,7 +19,7 @@ from models import (
 from passlib.hash import pbkdf2_sha256 as hasher
 from extensions import db
 from utils import is_valid_email, get_grade, calculate_gpa
-from decorators import admin_required
+from decorators import admin_required, super_admin_required
 
 admin = Blueprint("admin", __name__)
 
@@ -235,6 +235,7 @@ def admin_dashboard():
 @admin.route("/teams", methods=["GET", "POST"])
 @login_required
 @admin_required
+@super_admin_required
 def teams():
     try:
         page = int(request.args.get("page", 1))
