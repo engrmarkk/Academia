@@ -53,3 +53,17 @@ def check_authenticated(func):
         return func(*args, **kwargs)
 
     return wrapper
+
+
+# super admin required
+def super_admin_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        admin_user = Admin.query.filter_by(id=current_user.id).first()
+        if not admin_user.is_superadmin:
+            # session["alert"] = "You cannot access this page"
+            # session["bg_color"] = "danger"
+            return redirect(url_for("admin.admin_dashboard"))
+        return func(*args, **kwargs)
+
+    return wrapper
